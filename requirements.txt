@@ -1,0 +1,8 @@
+# Install CUDA PyTorch first; see README.md.
+torch==2.8.0
+numpy==2.5.3
+scipy==1.18.1
+scikit-learn==1.9.1
+pandas==3.0.6
+h5py==3.16.0
+pypots==1.5

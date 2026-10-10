@@ -1,0 +1,275 @@
+{
+  "input": {
+    "sampling_rate_hz": 128,
+    "window_samples": 256,
+    "shape": "N,C,T"
+  },
+  "evaluation": {
+    "missing_ratios": [
+      0.25,
+      0.5,
+      0.75
+    ],
+    "loss_type": "random whole electrode",
+    "n_splits": 3,
+    "original_folds": {
+      "SAGE-EEG": 3,
+      "Ridge": 5,
+      "MLP_DAE": 5,
+      "ConvDAE": 5,
+      "UNet1D": 3,
+      "BiLSTM_AE": 3,
+      "TCN_AE": 3,
+      "Transformer": 3,
+      "SAITS": 3,
+      "iTransformer": 3,
+      "GPVAE": 3,
+      "TimesNet": 3,
+      "TimeMixer": 3
+    },
+    "seed": 20261009,
+    "validation_subject_fraction": 0.2,
+    "max_validation_windows_per_subject": 64,
+    "metrics": [
+      "RMSE",
+      "MAE",
+      "NMSE",
+      "R2",
+      "PCC",
+      "SNR_dB",
+      "SpectralConvergence",
+      "LSD_dB",
+      "PSD_PCC",
+      "BandPowerRelativeError"
+    ],
+    "std_ddof": 1
+  },
+  "optimization": {
+    "optimizer": "AdamW",
+    "baseline_learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "max_epochs": 60,
+    "min_epochs": 15,
+    "patience": 10,
+    "gradient_clip_norm": 1.0,
+    "eval_batch_size": 256
+  },
+  "models": {
+    "SAGE-EEG": {
+      "experts": [
+        "absolute_field",
+        "global_gain_transport",
+        "subject_field_library",
+        "zero"
+      ],
+      "frequency_bands_hz": [
+        [
+          0,
+          4
+        ],
+        [
+          4,
+          8
+        ],
+        [
+          8,
+          13
+        ],
+        [
+          13,
+          30
+        ],
+        [
+          30,
+          65
+        ]
+      ],
+      "field_regularization": [
+        0.01,
+        0.1,
+        1.0,
+        10.0
+      ],
+      "channel_embedding_dim": 8,
+      "calibrator_hidden_dim": 32,
+      "absolute_calibrator_output_dim": 5,
+      "gain_calibrator_output_dim": 6,
+      "library_regularization": 0.1,
+      "library_temperature": 1.0,
+      "shrinkage_range": [
+        0,
+        1.5
+      ],
+      "absolute_batch": 128,
+      "gain_batch": 256,
+      "learning_rate": 0.003,
+      "absolute_loss_energy_floor": 1e-08,
+      "gain_loss_energy_floor": 1e-12,
+      "mixture": "nonnegative, sum to one, per loss rate, validation NMSE SLSQP"
+    },
+    "Ridge": {
+      "regularization_candidates": [
+        0.0001,
+        0.01,
+        1.0
+      ],
+      "input": "observed values + mask + bias; excludes target channel and its mask",
+      "batch_size": 64
+    },
+    "MLP_DAE": {
+      "hidden_dims": [
+        256,
+        64,
+        256
+      ],
+      "activation": "GELU",
+      "input_dim": "2*C*T",
+      "output_dim": "C*T",
+      "batch_size": 512
+    },
+    "ConvDAE": {
+      "encoder_channels": [
+        64,
+        128,
+        128
+      ],
+      "encoder_kernels": [
+        7,
+        5,
+        5
+      ],
+      "encoder_strides": [
+        2,
+        2,
+        2
+      ],
+      "decoder_channels": [
+        128,
+        64,
+        "C"
+      ],
+      "decoder_kernels": [
+        4,
+        4,
+        4
+      ],
+      "decoder_strides": [
+        2,
+        2,
+        2
+      ],
+      "activation": "GELU",
+      "batch_size": 256
+    },
+    "UNet1D": {
+      "encoder_channels": [
+        32,
+        64
+      ],
+      "bottleneck_channels": 128,
+      "decoder_channels": [
+        64,
+        32
+      ],
+      "block_kernels": [
+        5,
+        3
+      ],
+      "group_norm_groups": 8,
+      "pooling_factor": 2,
+      "upsampling": "linear",
+      "activation": "GELU",
+      "batch_size": 128
+    },
+    "BiLSTM_AE": {
+      "hidden_size": 64,
+      "layers": 2,
+      "bidirectional": true,
+      "dropout": 0.1,
+      "output_projection_dim": "C",
+      "batch_size": 256
+    },
+    "TCN_AE": {
+      "width": 64,
+      "dilations": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32
+      ],
+      "kernel_size": 3,
+      "convolutions_per_block": 2,
+      "dropout": 0.1,
+      "activation": "GELU",
+      "batch_size": 256
+    },
+    "Transformer": {
+      "n_layers": 2,
+      "d_model": 64,
+      "n_heads": 4,
+      "d_k": 16,
+      "d_v": 16,
+      "d_ffn": 128,
+      "dropout": 0.1,
+      "batch_size": 128
+    },
+    "SAITS": {
+      "n_layers": 2,
+      "d_model": 64,
+      "n_heads": 4,
+      "d_k": 16,
+      "d_v": 16,
+      "d_ffn": 128,
+      "dropout": 0.1,
+      "batch_size": 256
+    },
+    "iTransformer": {
+      "n_layers": 2,
+      "d_model": 64,
+      "n_heads": 4,
+      "d_k": 16,
+      "d_v": 16,
+      "d_ffn": 128,
+      "dropout": 0.1,
+      "batch_size": 256
+    },
+    "GPVAE": {
+      "latent_size": 16,
+      "encoder_sizes": [
+        64,
+        64
+      ],
+      "decoder_sizes": [
+        64,
+        64
+      ],
+      "beta": 0.001,
+      "window_size": 3,
+      "batch_size": 128
+    },
+    "TimesNet": {
+      "n_layers": 2,
+      "top_k": 3,
+      "d_model": 64,
+      "d_ffn": 128,
+      "n_kernels": 4,
+      "dropout": 0.1,
+      "apply_nonstationary_norm": false,
+      "batch_size": 64
+    },
+    "TimeMixer": {
+      "n_layers": 2,
+      "d_model": 64,
+      "d_ffn": 128,
+      "top_k": 3,
+      "downsampling_layers": 2,
+      "downsampling_window": 2,
+      "channel_independence": false,
+      "apply_nonstationary_norm": false,
+      "dropout": 0.1,
+      "batch_size": 256
+    }
+  }
+}

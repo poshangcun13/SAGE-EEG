@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+data/
+results/
+logs/
+*.pt
+*.pth
+*.npy
+*.npz
+*.h5
+*.edf
+*.dat
+.env
+.DS_Store
