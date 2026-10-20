@@ -45,7 +45,7 @@ python run.py train --models ConvDAE --datasets PhysioNet --folds 0 --batch-size
 python run.py summarize --output-dir results
 ```
 
-Training also tests selected checkpoints. Existing checkpoints are preserved; use a new output directory to retrain. `--original-folds` uses five folds for Ridge, MLP_DAE and ConvDAE and three for other models. Otherwise `--n-splits` defaults to three. Use the same split settings for training and testing.
+Training also tests selected checkpoints. Existing checkpoints are preserved; use a new output directory to retrain. All models use three-fold cross-validation by default (--n-splits 3). Use the same split settings for training and testing.
 
 `model_parameters.json` lists model hyperparameters, batch sizes and optimization settings. Model constructors implement the architecture parameters. `--batch-size` overrides training batches; `--eval-batch-size` defaults to 256. Other options include `--epochs`, `--min-epochs`, `--patience`, `--lr` and `--seed`.
 
